@@ -32,3 +32,10 @@ The trade-off: all datetimes must be in UTC (the string must end in `Z` or `+00:
 If `intervalMs` does not evenly divide the span from `start` to `end`, the final slot is truncated so its `end` equals the requested `end`. It will be shorter than the others; this is intentional, not a bug.
 
 A slot that straddles a break boundary is split into two slots — one non-break, one break — so no slot is ever partially inside a break. Overlapping or adjacent breaks are applied in sorted order and produce the same result regardless of input order. Zero-width or negative-width break windows are silently ignored.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
